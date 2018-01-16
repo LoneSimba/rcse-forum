@@ -8,8 +8,9 @@
  * @package RCSE
  */
 
+
 /**
- * Класс взамиодействий с БД
+ * Обеспечивает взаимодействие движка и PDO
  * 
  * @package RCSE
  * @subpackage Database
@@ -59,6 +60,8 @@ class Database {
     private $database;
 
     /**
+     * Конструктор Database
+     * 
      * @todo Получать имя БД, адрес хоста, логин и пароль СУБД из файла конфигурации
      */
     public function __construct()
@@ -70,7 +73,7 @@ class Database {
 
         try
         {
-            $this->database = new PDO($dbinfo, 'root', '',  array(PDO::ATTR_ERRMODE => PDO::ERRMODE_WARNING)); // Изменить: вместо 'root' и '' подставлять переменные $dbuser и $dbpass
+            $this->database = new PDO($dbinfo, 'root', '',  array(PDO::ATTR_ERRMODE => PDO::ERRMODE_WARNING));
         }
         catch(PDOException $e)
         {
@@ -80,15 +83,15 @@ class Database {
         $this->prepare_statemets();
     }
 
-
     /**
-     * Выполняет подготовку запросов к БД
-     * 
-     * @todo Добавить все указанные в списке переменных запросы
+     * Выполняет подготовку существующих запросов
+     *
+     * @return void
      */
     private function prepare_statemets()
     {
         $this->users_selectall = $this->database->prepare("SELECT * FROM users");
+        $this->users_select = $this->database->prepare("SELECT * FROM users WHERE login=?");
 
         $this->news_selectall = $this->database->prepare("SELECT * FROM news");
 
@@ -100,11 +103,11 @@ class Database {
     }
 
     /**
-     * Выполняет выбранный запрос
-     * 
-     * @param   string        $type     Тип запроса(см. переменные в начале файла)
-     * @param   array|string  $params   Параметры, используемые запросом
-     * @todo Добавить все указанные в списке переменных запросы
+     * Выполняет запрос, указанный в $type
+     *
+     * @param string $type   Тип запроса
+     * @param array  $params Массив параметров для запроса
+     * @return void
      */
     public function execute_statement(string $type, array $params)
     {
@@ -113,6 +116,9 @@ class Database {
         {
             case 'users_selall':
                 $this->users_selectall->execute();
+                break;
+            case 'users_sel':
+                $this->user_select->execute($params[0]);
                 break;
             case 'news_selall':
                 $this->news_selectall->execute();
@@ -130,14 +136,15 @@ class Database {
 
     }
 
-
     /**
      * Выполняет подготовку запроса, отличного от стандартных
-     * 
-     * @param   string  $statement  SQL запрос
-     * @todo Организовать вывод сообщения об ошибке на страницу, возможно через JS (alarm)
+     *
+     * @param string $table Таблица, к которй идет запрос
+     * @param string $statement SQL-запрос
+     * @return void
+     * @todo Вывод сообщения об ошибке в браузер через модальное окно
      */
-    private function prepare_statement_udef(string $statement)
+    private function prepare_statement_udef(string $table, string $statement)
     {
         switch($table)
         {
