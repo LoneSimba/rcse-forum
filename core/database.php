@@ -21,37 +21,41 @@ class Database {
      * Запросы
      */
 
-    public $users_selectall;
+    public $users_selall;
     public $users_select;
     public $users_addnew;
     public $users_update;
     public $users_remove;
 
-    public $news_selectall;
+    public $news_selall;
     public $news_select;
     public $news_addnew;
     public $news_update;
     public $news_remove;
 
-    public $comments_selectall;
+    public $comments_selall;
     public $comments_select;
     public $comments_addnew;
     public $comments_update;
     public $comments_remove;
 
-    public $topics_selectall;
+    public $topics_selall;
     public $topics_select;
     public $topics_addnew;
     public $topics_update;
     public $topics_remove;
 
-    public $bans_selectall;
+    public $bans_selall;
     public $bans_select;
     public $bans_addnew;
     public $bans_update;
     public $bans_remove;
 
-    public $userdef;
+    public $udef_selall;
+    public $udef_select;
+    public $udef_addnew;
+    public $udef_update;
+    public $udef_remove;
 
     /*
      * Экземпляры класса 
@@ -90,16 +94,16 @@ class Database {
      */
     private function prepare_statemets()
     {
-        $this->users_selectall = $this->database->prepare("SELECT * FROM users");
+        $this->users_selall = $this->database->prepare("SELECT * FROM users");
         $this->users_select = $this->database->prepare("SELECT * FROM users WHERE login=?");
 
-        $this->news_selectall = $this->database->prepare("SELECT * FROM news");
+        $this->news_selall = $this->database->prepare("SELECT * FROM news");
 
-        $this->comments_selectall = $this->database->prepare("SELECT * FROM comments");
+        $this->comments_selall = $this->database->prepare("SELECT * FROM comments");
 
-        $this->topics_selectall = $this->database->prepare("SELECT * FROM topics");
+        $this->topics_selall = $this->database->prepare("SELECT * FROM topics");
 
-        $this->bans_selectall = $this->database->prepare("SELECT * FROM  bans");
+        $this->bans_selall = $this->database->prepare("SELECT * FROM  bans");
     }
 
     /**
@@ -115,19 +119,19 @@ class Database {
         switch($type)
         {
             case 'users_selall':
-                $this->users_selectall->execute();
+                $this->users_selall->execute();
                 break;
-            case 'users_sel':
-                $this->user_select->execute($params[0]);
+            case 'users_select':
+                $this->users_select->execute($params[0]);
                 break;
             case 'news_selall':
-                $this->news_selectall->execute();
+                $this->news_selall->execute();
                 break;
             case 'topics_selall':
-                $this->topics_selectall->execute();
+                $this->topics_selall->execute();
                 break;
             case 'bans_selall':
-                $this->bans_selectall->execute();
+                $this->bans_selall->execute();
                 break;
             default:
                 print('Не выбран тип запроса!');

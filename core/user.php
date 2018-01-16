@@ -28,6 +28,8 @@ class User {
    */
   public function __construct() {
     $this->database = new Database();
+
+    if(!isset($_SESSION)) session_start();
   }
 
   
@@ -38,10 +40,26 @@ class User {
    * @param string $password  пароль
    * @return void
    */
-  public function authorization(string $login, string $password) {
+  public function auth(string $login, string $password) {
       $params = array($login);
-      $this->database->execute_statement($params);
+      $query = $this->database->execute_statement('users_select',$params);
 
+      if(!$query) {
+        echo 'Логин не найден!';
+      } else {
+        $result = $this->database->users_select->fetch(PDO::FETCH_ASSOC);
+
+        if(md5($password)!=$result['pass']) {
+          echo 'Пароль неверен!';
+        } else {
+          $_SESSION['login'] = $login;
+          $_SESSION['is_auth'] = true;
+        }
+      }
+  }
+
+  public function register() {
+    
   }
 
 }
