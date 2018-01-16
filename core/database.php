@@ -1,10 +1,19 @@
 <?php
-/*
- * Класс взаимодействия с базой данных. Использует СУБД PDO.
- * Содержит - шаблоны запросов, метод формирования и отправки запроса.
+/**
+ * Файл с основнымы взаимодействиями с БД
+ * 
+ * В этом файле размещены основные функции взаимодействия с БД, работает через СУБД PDO
+ * @author LoneSimba <siluet-stalker99@yandex.ru>
+ * @version 0.1
+ * @package RCSE
  */
 
-
+/**
+ * Класс взамиодействий с БД
+ * 
+ * @package RCSE
+ * @subpackage Database
+ */
 class Database {
 
     /*
@@ -49,12 +58,15 @@ class Database {
 
     private $database;
 
+    /**
+     * @todo Получать имя БД, адрес хоста, логин и пароль СУБД из файла конфигурации
+     */
     public function __construct()
     {
 
-        $dbinfo = 'mysql:dbname=rcse;host=127.0.0.1'; // Изменить: в dbname и host сделать получение из конфига
-        $dbuser; // Добавить: получать из конфига
-        $dbpass; // Добавить: получать из конфига
+        $dbinfo = 'mysql:dbname=rcse;host=127.0.0.1';
+        $dbuser;
+        $dbpass;
 
         try
         {
@@ -68,6 +80,12 @@ class Database {
         $this->prepare_statemets();
     }
 
+
+    /**
+     * Выполняет подготовку запросов к БД
+     * 
+     * @todo Добавить все указанные в списке переменных запросы
+     */
     private function prepare_statemets()
     {
         $this->users_selectall = $this->database->prepare("SELECT * FROM users");
@@ -81,8 +99,13 @@ class Database {
         $this->bans_selectall = $this->database->prepare("SELECT * FROM  bans");
     }
 
-
-    
+    /**
+     * Выполняет выбранный запрос
+     * 
+     * @param   string        $type     Тип запроса(см. переменные в начале файла)
+     * @param   array|string  $params   Параметры, используемые запросом
+     * @todo Добавить все указанные в списке переменных запросы
+     */
     public function execute_statement(string $type, array $params)
     {
 
@@ -107,7 +130,14 @@ class Database {
 
     }
 
-    private function prepare_statement_wtable(string $table, $statement)
+
+    /**
+     * Выполняет подготовку запроса, отличного от стандартных
+     * 
+     * @param   string  $statement  SQL запрос
+     * @todo Организовать вывод сообщения об ошибке на страницу, возможно через JS (alarm)
+     */
+    private function prepare_statement_udef(string $statement)
     {
         switch($table)
         {
@@ -116,7 +146,7 @@ class Database {
             case 'topics':
             case 'comments':
             case 'news':
-                print('Нельзя подготовить запрос - эти запросы уже подготовлены!'); // Изменить: придумать вывод предупреждением на страницу (возможно через alarm)
+                print('Нельзя подготовить запрос - эти запросы уже подготовлены!');
                 return;
                 break;
             default:
