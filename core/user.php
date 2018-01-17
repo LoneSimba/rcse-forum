@@ -53,12 +53,24 @@ class User {
           echo 'Пароль неверен!';
         } else {
           $_SESSION['login'] = $login;
-          $_SESSION['is_auth'] = true;
+          $_SESSION['auth'] = true;
         }
       }
   }
 
-  public function register() {
+  /**
+   * Заносит данные пользователя в БД, осуществляя регистрацию
+   *
+   * @param string $login
+   * @param string $password
+   * @param string $brithday
+   * @param string $email
+   * @return void
+   */
+  public function register(string $login, string $password, string $brithday, string $email) {
+    $regdate_raw = new DateTime();
+    $regdate = $regdate_raw->format('Y-m-d');
+    $pass = md5($password);
     
   }
 
