@@ -42,7 +42,7 @@ class User {
    */
   public function auth(string $login, string $password) {
       $params = array($login);
-      $query = $this->database->execute_statement('users_select',$params);
+      $query = $this->database->execute_statement('users_sellog',$params);
 
       if(!$query) {
         echo 'Логин не найден!';
@@ -74,13 +74,32 @@ class User {
 
     // INSERT INTO users VALUES(login,password,email,group,gender,bd,rd,rating,messages,comments,activated,code,avatar,theme)
     $params[] = array($login,$pass,$email,'user',$gender,$brithday,$regdate,0,0,0,false,'aaaaaaaaa','default.png','default');
-    $query = $this->database->execute_statement('users_insert',$params);
+    $query = $this->database->execute_statement('users_addnew',$params);
 
     if(!$query) {
-      echo '(Сервер)Ошибка регистрации! '.$this->database->users_insert->errorinfo();
+      echo '(Сервер)Ошибка регистрации! '.$this->database->users_addnew->errorinfo();
     } else {
       echo 'Регистрация успешно завершена!';
     }
+  }
+
+  /**
+   * Получает из БД данные выбранного пользователя
+   *
+   * @param string $login
+   * @return array $data
+   */
+  public function get_userdata(string $login) {
+    $params[] = array($login);
+    $result = $this->database->execute_statement("users_selsafe",$params);
+    
+    if(!$query) {
+      $data[] = array('Error');
+    } else {
+      $data[] = $this->database->users_select->fetch(PDO::FETCH_ASSOC);
+    }
+
+    return $data;
   }
 
 }

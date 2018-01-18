@@ -4,7 +4,7 @@
  * 
  * В этом файле размещены основные функции взаимодействия с БД, работает через СУБД PDO
  * @author LoneSimba <siluet-stalker99@yandex.ru>
- * @version 0.1
+ * @version 0.1b
  * @package RCSE
  */
 
@@ -22,10 +22,17 @@ class Database {
      */
 
     public $users_selall;
-    public $users_select;
+    public $users_selsafe;
+    public $users_sellog;
     public $users_addnew;
     public $users_update;
     public $users_remove;
+     /**
+      * Этот запрос небезопасен и его использование под вопросом
+      * @see $users_selsafe,$users_sellog
+      * @deprecated 0.1b
+      */
+    public $users_select;
 
     public $news_selall;
     public $news_select;
@@ -95,7 +102,9 @@ class Database {
     private function prepare_statemets()
     {
         $this->users_selall = $this->database->prepare("SELECT * FROM users");
-        $this->users_select = $this->database->prepare("SELECT * FROM users WHERE login=?");
+        $this->users_select = $this->database->prepare("SELECT `login`, `email`, `group`, `gender`, `brithday`, `regday`, `rating`, `messages`, `comments`, `activated`, `code`, `avatar`, `theme` FROM users WHERE login=?");
+        $this->users_selsafe = $this->database->prepare("SELECT `login`,`group`,`gender`,`brithday`,`regdate`,`rating`,`messages`,`comments`")
+        $this->users_addnew = $this->database->prepare("INSERT INTO `users`(`login`, `pass`, `email`, `group`, `gender`, `brithday`, `regday`, `rating`, `messages`, `comments`, `activated`, `code`, `avatar`, `theme`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 
         $this->news_selall = $this->database->prepare("SELECT * FROM news");
 
@@ -121,8 +130,14 @@ class Database {
             case 'users_selall':
                 $this->users_selall->execute();
                 break;
-            case 'users_select':
-                $this->users_select->execute($params[0]);
+            case 'users_sellog':
+                $this->users_sellog->execute($params);
+                break;
+            case 'users_selsafe':
+                $this->users_selsafe->execute($params);
+                break;
+            case 'users_addnew':
+                $this->users_addnew->execute($params);
                 break;
             case 'news_selall':
                 $this->news_selall->execute();
