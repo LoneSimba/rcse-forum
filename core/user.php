@@ -67,11 +67,20 @@ class User {
    * @param string $email
    * @return void
    */
-  public function register(string $login, string $password, string $brithday, string $email) {
+  public function register(string $login, string $password, string $brithday, string $email, string $gender) {
     $regdate_raw = new DateTime();
     $regdate = $regdate_raw->format('Y-m-d');
     $pass = md5($password);
-    
+
+    // INSERT INTO users VALUES(login,password,email,group,gender,bd,rd,rating,messages,comments,activated,code,avatar,theme)
+    $params[] = array($login,$pass,$email,'user',$gender,$brithday,$regdate,0,0,0,false,'aaaaaaaaa','default.png','default');
+    $query = $this->database->execute_statement('users_insert',$params);
+
+    if(!$query) {
+      echo '(Сервер)Ошибка регистрации! '.$this->database->users_insert->errorinfo();
+    } else {
+      echo 'Регистрация успешно завершена!';
+    }
   }
 
 }
