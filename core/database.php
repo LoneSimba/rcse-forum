@@ -23,16 +23,12 @@ class Database {
 
     public $users_selall;
     public $users_selsafe;
+    public $users_select;
     public $users_sellog;
     public $users_addnew;
-    public $users_update;
+    public $users_updlday;
+    public $users_updact;
     public $users_remove;
-     /**
-      * Этот запрос небезопасен и его использование под вопросом
-      * @see $users_selsafe,$users_sellog
-      * @deprecated 0.1b
-      */
-    public $users_select;
 
     public $news_selall;
     public $news_select;
@@ -101,18 +97,22 @@ class Database {
      */
     private function prepare_statemets()
     {
-        $this->users_selall = $this->database->prepare("SELECT * FROM users");
-        $this->users_select = $this->database->prepare("SELECT `login`, `email`, `group`, `gender`, `brithday`, `regday`, `rating`, `messages`, `comments`, `activated`, `code`, `avatar`, `theme` FROM users WHERE login=?");
-        $this->users_selsafe = $this->database->prepare("SELECT `login`,`group`,`gender`,`brithday`,`regdate`,`rating`,`messages`,`comments`")
-        $this->users_addnew = $this->database->prepare("INSERT INTO `users`(`login`, `pass`, `email`, `group`, `gender`, `brithday`, `regday`, `rating`, `messages`, `comments`, `activated`, `code`, `avatar`, `theme`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+        $this->users_selall = $this->database->prepare("SELECT * FROM `users`");
+        $this->users_select = $this->database->prepare("SELECT `login`, `email`, `group`, `gender`, `brithday`, `regday`, `rating`, `messages`, `comments`, `activated`, `code`, `avatar`, `theme` FROM `users` WHERE `login`=?");
+        $this->users_selsafe = $this->database->prepare("SELECT `login`,`group`,`gender`,`city`,`country`,`brithday`,`regday`,`loginday`,`rating`,`messages`,`comments`, `theme` FROM `users` WHERE `login`=?");
+        $this->users_sellog = $this->database->prepare("SELECT `pass`,`activated` FROM users WHERE `login`=?");
+        $this->users_addnew = $this->database->prepare("INSERT INTO `users`(`login`, `pass`, `email`, `group`, `gender`, `city`, `country`, `brithday`, `regday`, `loginday`, `rating`, `messages`, `comments`, `activated`, `code`, `avatar`, `theme`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+        $this->users_updlday = $this->database->prepare("UPDATE `users` SET `loginday`=? WHERE `login`=?");
+        $this->users_updact = $this->database->prepare("UPDATE `users` SET `activated`=? WHERE `code`=?");
+        $this->users_update = $this->database->prepare("UPDATE `users` SET `login`=?, `email`=?, `group`=?, `gender`=?, `city`=?, `country`=?, `brithday`=?, `regday`=?, `loginday`=?, `activated`=?, `avatar`=?, `theme`=? WHERE `login`=?");
 
-        $this->news_selall = $this->database->prepare("SELECT * FROM news");
+        $this->news_selall = $this->database->prepare("SELECT * FROM `news`");
 
-        $this->comments_selall = $this->database->prepare("SELECT * FROM comments");
+        $this->comments_selall = $this->database->prepare("SELECT * FROM `comments`");
 
-        $this->topics_selall = $this->database->prepare("SELECT * FROM topics");
+        $this->topics_selall = $this->database->prepare("SELECT * FROM `topics`");
 
-        $this->bans_selall = $this->database->prepare("SELECT * FROM  bans");
+        $this->bans_selall = $this->database->prepare("SELECT * FROM  `bans`");
     }
 
     /**
@@ -135,6 +135,15 @@ class Database {
                 break;
             case 'users_selsafe':
                 $this->users_selsafe->execute($params);
+                break;
+            case 'users_select':
+                $this->users_select->execute($params);
+                break;
+            case 'users_updlday':
+                $this->users_updlday->execute($params);
+                break;
+            case 'users_updact':
+                $this->users_updact->execute($params);
                 break;
             case 'users_addnew':
                 $this->users_addnew->execute($params);
